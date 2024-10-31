@@ -8,7 +8,7 @@ import fs from 'fs'
 import { dbConnection } from './database.js';
 import Sockets from './sockets.js';
 
-const googleServices = JSON.parse(fs.readFileSync(new URL('../key.json', import.meta.url)));
+// const googleServices = JSON.parse(fs.readFileSync(new URL('../key.json', import.meta.url)));
 
 export class Server {
     constructor() {
@@ -26,9 +26,9 @@ export class Server {
         this.app.use( cors() );
         this.app.use( express.json() );
 
-        admin.initializeApp({
-            credential: admin.credential.cert( googleServices )
-        });
+        // admin.initializeApp({
+        //     credential: admin.credential.cert( googleServices )
+        // });
 
         const orderController = await import('../controllers/order.js');
         this.app.use( '/api/orders', orderController.default );

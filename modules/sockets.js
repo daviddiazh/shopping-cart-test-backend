@@ -16,18 +16,20 @@ class Sockets {
             this.io.emit('get-orders', await service.findAll());
 
             socket.on('update-order', async (data) => {
-                await service.updateStatus(data?._id, data?.newState)
-                socket.emit('get-orders', await service.findAll());
+                await service.updateStatus(data?._id, data?.newStatus)
+                this.io.emit('get-orders', await service.findAll());
             });
  
             socket.on('create-order', async (data) => {
                 const resp = await service.create({ products: data, status: 'order-received' })
-                socket.emit('get-orders', await service.findAll());
+                this.io.emit('get-orders', await service.findAll());
 
-                setInterval(async () => {
+                const intervalId = setInterval(async () => {
                     await service.updateStatus(resp?._id, 'preparing')
                     this.io.emit('get-orders', await service.findAll());
-                }, 4000)
+
+                    clearInterval(intervalId);
+                }, 4000);
             });
 
             socket.on('disconnect', async() => {
