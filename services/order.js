@@ -6,7 +6,7 @@ export class OrderService {
     }
 
     async create (data) {
-        await this.db.create(data);
+        return await this.db.create(data);
     }
 
     async findAll () {

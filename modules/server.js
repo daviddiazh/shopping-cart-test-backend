@@ -2,8 +2,13 @@ import express from 'express';
 import http from 'http';
 import { Server as SocketServer } from 'socket.io';
 import cors from 'cors';
+import admin from 'firebase-admin'
+import fs from 'fs'
 
 import { dbConnection } from './database.js';
+import Sockets from './sockets.js';
+
+const googleServices = JSON.parse(fs.readFileSync(new URL('../key.json', import.meta.url)));
 
 export class Server {
     constructor() {
@@ -21,12 +26,16 @@ export class Server {
         this.app.use( cors() );
         this.app.use( express.json() );
 
+        admin.initializeApp({
+            credential: admin.credential.cert( googleServices )
+        });
+
         const orderController = await import('../controllers/order.js');
         this.app.use( '/api/orders', orderController.default );
     }
 
     configureSockets() {
-        //todo
+        new Sockets( this.io )
     }
 
     execute() {
