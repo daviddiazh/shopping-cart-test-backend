@@ -19,7 +19,15 @@ export class Server {
 
         this.server = http.createServer( this.app );
 
-        this.io = new SocketServer( this.server, {} );
+        // this.io = new SocketServer( this.server, {} );
+        this.io = new SocketServer(this.server, {
+            transports: ['polling'], // Cambia a 'polling' para evitar el uso de WebSockets en Vercel
+            cors: {
+                origin: "*",
+                methods: ["GET", "POST"],
+                credentials: true
+            }
+        });
     }
 
     async middlewares() {
